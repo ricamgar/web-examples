@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+	$(function() {
+		$.ajax({
+			type : "GET",
+			url : "http://localhost:8080/team/0"
+		}).then(function(data) {
+			$('.team-name').append(data.name);
+			$('.team-players').append(JSON.stringify(data.players));
+		});
+	});
+</script>
+</head>
+<body>
+	<div>
+		<p class="team-name">Team:</p>
+		<p class="team-players">Players:</p>
+	</div>
+</body>
+</html>
