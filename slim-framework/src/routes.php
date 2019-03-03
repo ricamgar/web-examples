@@ -11,6 +11,15 @@ $app->post('/user', UsersController::class . ':createUser');
 $app->put('user/{id}', UsersController::class . 'updateUser');
 $app->delete('user/{id}', UsersController::class . 'deleteUser');
 
+// obtener un usuario por id
+
+// crear un usuario
+
+// actualizar un usuario
+
+// borrar un usuario
+
+
 $app->get('/[{name}]', function (Request $request, Response $response, array $args) {
     // Sample log message
     $this->logger->info("Slim-Skeleton '/' route");
