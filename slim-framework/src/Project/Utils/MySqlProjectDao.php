@@ -24,4 +24,24 @@ class MySqlProjectDao implements ProjectDao
         $stm->execute($params);
         return $stm->fetchAll();
     }
+
+    public function fetch($sql, $params = null)
+    {
+        $stm = $this->connection->prepare($sql);
+        $stm->execute($params);
+        return $stm->fetch();
+    }
+
+    public function execute($sql, $params = null)
+    {
+        $stm = $this->connection->prepare($sql);
+        $stm->execute($params);
+    }
+
+    public function insert($sql, $params = null)
+    {
+        $stm = $this->connection->prepare($sql);
+        $stm->execute($params);
+        return $this->connection->lastInsertId();
+    }
 }

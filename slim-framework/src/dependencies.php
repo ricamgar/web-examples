@@ -24,3 +24,14 @@ $container['projectDao'] = function ($c) {
     $dbConnection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
     return new \Project\Utils\MySqlProjectDao($dbConnection);
 };
+
+$container['secret'] = function ($c) {
+    return "miclavesecreta";
+};
+
+$container['authentication'] = function ($c) {
+    return new \Slim\Middleware\JwtAuthentication([
+        "secure" => false,
+        "secret" => $c['secret']
+    ]);
+};
