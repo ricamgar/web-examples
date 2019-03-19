@@ -18,20 +18,9 @@ $container['logger'] = function ($c) {
     return $logger;
 };
 
-$container['projectDao'] = function ($c) {
-    $dbConnection = new PDO("mysql:host=localhost;dbname=desarrolloweb", "root", "root");
+$container['dbConnection'] = function ($c) {
+    $dbConnection = new PDO("mysql:host=localhost;dbname=desarrolloweb;charset=UTF8", "root", "root");
     $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $dbConnection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
     return new \Project\Utils\MySqlProjectDao($dbConnection);
-};
-
-$container['secret'] = function ($c) {
-    return "miclavesecreta";
-};
-
-$container['authentication'] = function ($c) {
-    return new \Slim\Middleware\JwtAuthentication([
-        "secure" => false,
-        "secret" => $c['secret']
-    ]);
 };

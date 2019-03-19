@@ -11,12 +11,11 @@ use Slim\Http\Response;
 class UsersController
 {
     private $dao;
-    private $secret;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->dao = new UsersDao($container['projectDao']);
-        $this->secret = $container['secret'];
+        $dbConnection = $container['dbConnection'];
+        $this->dao = new UsersDao($dbConnection);
     }
 
     function getAll(Request $request, Response $response, array $args)
@@ -31,51 +30,22 @@ class UsersController
         return $response->withJson($user);
     }
 
-    function updateUser(Request $request, Response $response, array $args)
-    {
-        if ($requestUserId = $request->getAttribute('token')->id) {
-            $userId = $args['id'];
-            if ($userId == $requestUserId) {
-                $user = $request->getParsedBody();
-                $updatedUser = $this->dao->updateUser($userId, $user);
-                return $response->withJson($updatedUser);
-            } else {
-                return $response->withStatus(403);
-            }
-        } else {
-            return $response->withStatus(401);
-        }
+    function updateUser(Request $request, Response $response, array $args) {
+        $userId = $args['id'];
+        $body = $request->getParsedBody();
+        $user = $this->dao->updateUser($userId, $body);
+        return $response->withJson($user);
     }
 
-    function createUser(Request $request, Response $response, array $args)
-    {
-        $newUser = $this->dao->createUser($request->getParsedBody());
-
-        $token = $this->getToken($newUser->id);
-
-        $newUser->token = $token;
-        $updatedUser = $this->dao->updateUser($newUser->id, (array)$newUser);
-
-        return $response->withJson($updatedUser);
+    function createUser(Request $request, Response $response, array $args) {
+        $body = $request->getParsedBody();
+        $user = $this->dao->createUser($body);
+        return $response->withJson($user);
     }
 
-    function deleteUser(Request $request, Response $response, array $args)
-    {
-        $this->dao->delete($args['id']);
-        return $response->withStatus(204);
-    }
-
-    private function getToken($newUserId)
-    {
-        $now = new DateTime();
-        $future = new DateTime("now +1 year");
-        $payload = [
-            "iat" => $now->getTimeStamp(),
-            "exp" => $future->getTimeStamp(),
-            "jti" => base64_encode(random_bytes(16)),
-            "id" => $newUserId,
-        ];;
-        $token = JWT::encode($payload, $this->secret, "HS256");
-        return $token;
+    function deleteUser(Request $request, Response $response, array $args) {
+        $userId = $args['id'];
+        $this->dao->delete($userId);
+        return $response->withStatus(201);
     }
 }

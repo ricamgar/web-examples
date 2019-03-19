@@ -6,50 +6,44 @@ use Project\Utils\ProjectDao;
 
 class UsersDao
 {
+    private $dbConnection;
 
-    private $projectDao;
-
-    public function __construct(ProjectDao $projectDao)
+    public function __construct(ProjectDao $dbConnection)
     {
-        $this->projectDao = $projectDao;
+        $this->dbConnection = $dbConnection;
     }
 
     public function getAll()
     {
         $sql = "SELECT * FROM USERS";
-        $users = $this->projectDao->fetchAll($sql);
-        return $users;
+        return $this->dbConnection->fetchAll($sql);
     }
 
     public function getById($id)
     {
         $sql = "SELECT * FROM USERS WHERE id = ?";
-        $users = $this->projectDao->fetch($sql, array($id));
-        return $users;
+        return $this->dbConnection->fetch($sql, array($id));
     }
 
     public function updateUser($userId, $user)
     {
         $sql = "UPDATE USERS SET name = ?, mail = ?, token = ? WHERE id = ?";
-        $this->projectDao->execute($sql, array($user['name'], $user['mail'], $user['token'], $userId));
-        $sql = "SELECT * FROM USERS WHERE id = ?";
-        $updatedUser = $this->projectDao->fetch($sql, array($userId));
-        return $updatedUser;
+        $this->dbConnection->execute($sql, array($user['name'], $user['mail'], $user['token'], $userId));
+
+        return $this->getById($userId);
     }
 
     public function createUser($user)
     {
         $sql = "INSERT INTO USERS (name, mail) VALUES (?, ?)";
-        $id = $this->projectDao->insert($sql, array($user['name'], $user['mail']));
+        $id = $this->dbConnection->insert($sql, array($user['name'], $user['mail']));
 
-        $sql = "SELECT * FROM USERS WHERE id = ?";
-        $updatedUser = $this->projectDao->fetch($sql, array($id));
-        return $updatedUser;
+        return $this->getById($id);
     }
 
     public function delete($id)
     {
         $sql = "DELETE FROM USERS WHERE id = ?";
-        return $this->projectDao->execute($sql, array($id));
+        $this->dbConnection->execute($sql, array($id));
     }
 }
