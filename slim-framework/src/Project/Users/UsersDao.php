@@ -35,8 +35,8 @@ class UsersDao
 
     public function createUser($user)
     {
-        $sql = "INSERT INTO USERS (name, mail) VALUES (?, ?)";
-        $id = $this->dbConnection->insert($sql, array($user['name'], $user['mail']));
+        $sql = "INSERT INTO USERS (name, mail, age) VALUES (?, ?, ?)";
+        $id = $this->dbConnection->insert($sql, array($user['name'], $user['mail'], $user['age']));
 
         return $this->getById($id);
     }
