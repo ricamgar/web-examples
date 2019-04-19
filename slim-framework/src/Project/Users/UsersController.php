@@ -2,8 +2,6 @@
 
 namespace Project\Users;
 
-use DateTime;
-use Firebase\JWT\JWT;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -30,20 +28,31 @@ class UsersController
         return $response->withJson($user);
     }
 
-    function updateUser(Request $request, Response $response, array $args) {
-        $userId = $args['id'];
-        $body = $request->getParsedBody();
-        $user = $this->dao->updateUser($userId, $body);
-        return $response->withJson($user);
+    function updateUser(Request $request, Response $response, array $args)
+    {
+        if ($requestUserId = $request->getAttribute('token')->id) {
+            $userId = $args['id'];
+            if ($requestUserId === $userId) {
+                $body = $request->getParsedBody();
+                $user = $this->dao->updateUser($userId, $body);
+                return $response->withJson($user);
+            } else {
+                return $response->withStatus(401);
+            }
+        } else {
+            return $response->withStatus(404);
+        }
     }
 
-    function createUser(Request $request, Response $response, array $args) {
+    function createUser(Request $request, Response $response, array $args)
+    {
         $body = $request->getParsedBody();
         $user = $this->dao->createUser($body);
         return $response->withJson($user);
     }
 
-    function deleteUser(Request $request, Response $response, array $args) {
+    function deleteUser(Request $request, Response $response, array $args)
+    {
         $userId = $args['id'];
         $this->dao->delete($userId);
         return $response->withStatus(201);
