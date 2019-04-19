@@ -51,6 +51,16 @@ class UsersController
         return $response->withJson($user);
     }
 
+    function loginUser(Request $request, Response $response, array $args)
+    {
+        $body = $request->getParsedBody();
+        if ($user = $this->dao->loginUser($body)) {
+            return $response->withJson($user);
+        } else {
+            return $response->withStatus(401);
+        }
+    }
+
     function deleteUser(Request $request, Response $response, array $args)
     {
         $userId = $args['id'];

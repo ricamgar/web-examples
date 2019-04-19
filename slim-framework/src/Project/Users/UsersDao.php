@@ -46,6 +46,20 @@ class UsersDao
         return $user;
     }
 
+    public function loginUser($body)
+    {
+        $mail = $body['mail'];
+        $password = $body['password'];
+        $sql = "SELECT * FROM USERS WHERE mail = ?";
+        $user = $this->dbConnection->fetch($sql, array($mail));
+        if ($user->password === $password) {
+            $user->token = $this->generateToken($user->id);
+            return $user;
+        } else {
+            return false;
+        }
+    }
+
     public function delete($id)
     {
         $sql = "DELETE FROM USERS WHERE id = ?";
